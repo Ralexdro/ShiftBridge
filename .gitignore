@@ -5,3 +5,6 @@
 .codex/config.toml
 .claude/settings.local.json
 # END Lens Studio managed Agents-Docs block
+
+# Added by Alejandro Robles (private depuration key)
+spk_debug_key.pem
