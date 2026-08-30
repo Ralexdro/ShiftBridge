@@ -1,0 +1,49 @@
+- !<AssetImportMetadata/26fb3e2c-f1c0-41f7-8178-02cafc5adc78>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> a9cd3fbf-fe99-4f15-8f90-d5182bb2e7ee
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> a9cd3fbf-fe99-4f15-8f90-d5182bb2e7ee
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 642bd7d0-7a2c-461f-99d4-4a4577deaba4
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/642bd7d0-7a2c-461f-99d4-4a4577deaba4>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  VersionPrerelease: ""
+  UpdateOrder: 0
+  ComponentUid: 322dc164-40af-4ec2-8b24-167936061111
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    cameraRollModule: false
+    remoteMediaModule: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - cameraRollModule: !<reference.CameraRollModule> 00000000-0000-0000-0000-000000000000
+      remoteMediaModule: !<reference.RemoteMediaModule> 00000000-0000-0000-0000-000000000000
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @input Asset.CameraRollModule cameraRollModule {"hint":"Native Camera Roll selector used for one session-local activity photo."}'
+    - '// @input Asset.RemoteMediaModule remoteMediaModule {"hint":"Loads the selected Camera Roll resource into a runtime Texture."}'

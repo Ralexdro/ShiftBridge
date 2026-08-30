@@ -1,0 +1,16 @@
+- !<AssetImportMetadata/bda13f43-5534-48d9-8710-d63ef0d3fe1f>
+  ImportedAssetIds:
+    CameraRollModule: !<reference> d0f6cb6c-0063-4fb1-970f-739ac039bd8b
+  ImporterName: CameraRollModuleImporter
+  PrimaryAsset: !<reference> d0f6cb6c-0063-4fb1-970f-739ac039bd8b
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    {}
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
