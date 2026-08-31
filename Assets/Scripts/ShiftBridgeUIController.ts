@@ -263,7 +263,12 @@ export class ShiftBridgeUIController extends BaseScriptComponent {
     this.text(parent, "PENDING", "Header", 3.2)
     const content = this.detailTextColumn(parent, activity)
     this.detailPhotoSlot(parent, activity, new vec3(5.9, 5.9, 0.35))
-    this.text(content, activity.title, "Body", 2.8, HorizontalAlignment.Left, HorizontalOverflow.Ellipsis); this.text(content, activity.department + " · " + (activity.priority || "") + overdue, "Caption", 2.2, HorizontalAlignment.Left, HorizontalOverflow.Ellipsis); this.text(content, activity.description, "Caption", 3.2, HorizontalAlignment.Left, HorizontalOverflow.Ellipsis); this.text(content, "Created by " + activity.createdBy + " · " + this.compactTime(activity.createdAt), "Caption", 2.2, HorizontalAlignment.Left, HorizontalOverflow.Ellipsis); this.detailPhotoUnavailable(content, activity)
+    const contentWidth = (content.getComponent(FlexLayout.getTypeName()) as FlexLayout).width
+    this.text(content, activity.title, "Body", 2.6, HorizontalAlignment.Left, HorizontalOverflow.Ellipsis, contentWidth)
+    this.text(content, activity.department + " · " + (activity.priority || "") + overdue, "Caption", 2.0, HorizontalAlignment.Left, HorizontalOverflow.Ellipsis, contentWidth)
+    const description = this.text(content, activity.description, "Caption", 5.6, HorizontalAlignment.Left, HorizontalOverflow.Wrap, contentWidth)
+    description.verticalAlignment = VerticalAlignment.Top; description.verticalOverflow = VerticalOverflow.Truncate
+    this.text(content, "Created by " + activity.createdBy + " · " + this.compactTime(activity.createdAt), "Caption", 2.0, HorizontalAlignment.Left, HorizontalOverflow.Ellipsis, contentWidth); this.detailPhotoUnavailable(content, activity)
     const footer = this.column(parent, 18, 7.6, 0); this.attach(parent, footer, 7.6)
     const footerLayout = footer.getComponent(FlexLayout.getTypeName()) as FlexLayout; footerLayout.paddingTop = 0; footerLayout.paddingBottom = 0; footerLayout.paddingLeft = 0; footerLayout.paddingRight = 0; footerLayout.justifyContent = FlexJustify.SpaceBetween
     if (activity.status === "Open") this.button(footer, "✓ COMPLETE", 13, () => this.completePending(activity.id)); else this.text(footer, "✓ COMPLETED", "Caption", 2.2, HorizontalAlignment.Left)
@@ -303,7 +308,12 @@ export class ShiftBridgeUIController extends BaseScriptComponent {
     const content = this.detailTextColumn(parent, activity)
     // Update has no Complete action, so its SpaceBetween content sits 1.95 units lower.
     this.detailPhotoSlot(parent, activity, new vec3(5.9, 3.95, 0.35))
-    this.text(content, activity.title, "Body", 2.8, HorizontalAlignment.Left, HorizontalOverflow.Ellipsis); this.text(content, activity.department + " · " + this.compactTime(activity.createdAt), "Caption", 2.2, HorizontalAlignment.Left, HorizontalOverflow.Ellipsis); this.text(content, activity.description, "Caption", 3.4, HorizontalAlignment.Left, HorizontalOverflow.Ellipsis); this.text(content, "Created by " + activity.createdBy, "Caption", 2.2, HorizontalAlignment.Left, HorizontalOverflow.Ellipsis); this.detailPhotoUnavailable(content, activity)
+    const contentWidth = (content.getComponent(FlexLayout.getTypeName()) as FlexLayout).width
+    this.text(content, activity.title, "Body", 2.6, HorizontalAlignment.Left, HorizontalOverflow.Ellipsis, contentWidth)
+    this.text(content, activity.department + " · " + this.compactTime(activity.createdAt), "Caption", 2.0, HorizontalAlignment.Left, HorizontalOverflow.Ellipsis, contentWidth)
+    const description = this.text(content, activity.description, "Caption", 6.0, HorizontalAlignment.Left, HorizontalOverflow.Wrap, contentWidth)
+    description.verticalAlignment = VerticalAlignment.Top; description.verticalOverflow = VerticalOverflow.Truncate
+    this.text(content, "Created by " + activity.createdBy, "Caption", 2.0, HorizontalAlignment.Left, HorizontalOverflow.Ellipsis, contentWidth); this.detailPhotoUnavailable(content, activity)
     const footer = this.column(parent, 18, 3.8, 0); this.attach(parent, footer, 3.8)
     const footerLayout = footer.getComponent(FlexLayout.getTypeName()) as FlexLayout; footerLayout.paddingTop = 0; footerLayout.paddingBottom = 0; footerLayout.paddingLeft = 0; footerLayout.paddingRight = 0; footerLayout.justifyContent = FlexJustify.End
     this.button(footer, "BACK", 8, () => { this.updateDetail = null; this.show(ShiftBridgeView.DASHBOARD) })
@@ -346,9 +356,9 @@ export class ShiftBridgeUIController extends BaseScriptComponent {
     this.button(stack, "DEPARTMENT: " + (this.formDepartment || "SELECT"), 30, () => { if (departments.length > 0) { const current = departments.indexOf(this.formDepartment); this.formDepartment = departments[(current + 1 + departments.length) % departments.length]; this.show(ShiftBridgeView.NEW_ACTIVITY_FORM) } })
     if (this.formType === "Pending") this.button(stack, "PRIORITY: " + this.formPriority, 20, () => { this.formPriority = this.formPriority === "High" ? "Low" : "High"; this.show(ShiftBridgeView.NEW_ACTIVITY_FORM) })
     const title = this.input(stack, "Title", 56); const desc = this.input(stack, "Description", 56)
-    // Keep this fixed: the square thumbnail and its action row cannot consume
-    // the independent Save / Cancel row below it.
-    this.formPhotoHost = this.column(stack, 56, 6.0, 0); this.attach(stack, this.formPhotoHost, 6.0)
+    // The selected-photo controls occupy one fixed horizontal row, leaving
+    // Save / Cancel as the independent row immediately below this section.
+    this.formPhotoHost = this.column(stack, 56, 3.2, 0); this.attach(stack, this.formPhotoHost, 3.2)
     const photoLayout = this.formPhotoHost.getComponent(FlexLayout.getTypeName()) as FlexLayout; photoLayout.paddingTop = 0; photoLayout.paddingBottom = 0; photoLayout.paddingLeft = 0; photoLayout.paddingRight = 0
     this.renderFormPhotoSection()
     const feedback = this.text(stack, "", "Caption", 2)
@@ -408,10 +418,16 @@ export class ShiftBridgeUIController extends BaseScriptComponent {
     const host = this.formPhotoHost; if (!host) return
     while (host.getChildrenCount() > 0) host.getChild(0).destroy()
     if (this.pendingPhotoTexture) {
-      this.photoThumbnail(host, this.pendingPhotoTexture, 2.9)
-      const actions = this.row(host, 34, 2.5); this.attach(host, actions, 2.5)
+      // The form preview is a normal Image in a Flex-managed slot. It is
+      // intentionally separate from the ScrollWindow-based detail thumbnail.
+      const actions = this.row(host, 42, 2.9)
+      const actionsItem = actions.createComponent(FlexItem.getTypeName()) as FlexItem
+      actionsItem.alignSelf = FlexAlignSelf.Center; actionsItem.overrideWidth = 42; actionsItem.overrideHeight = 2.9
+      const hostLayout = host.getComponent(FlexLayout.getTypeName()) as FlexLayout; hostLayout.addItems([actionsItem])
+      const actionsLayout = actions.getComponent(FlexLayout.getTypeName()) as FlexLayout; actionsLayout.justifyContent = FlexJustify.SpaceBetween
       this.button(actions, "CHANGE PHOTO", 16, () => this.openPhotoPicker(), HorizontalAlignment.Center, SECONDARY_TEXT, false, 2.5)
       this.button(actions, "REMOVE PHOTO", 14, () => this.clearPendingPhoto(), HorizontalAlignment.Center, SECONDARY_TEXT, false, 2.5)
+      this.formPhotoThumbnail(actions, this.pendingPhotoTexture, 2.9)
       return
     }
     this.button(host, "ADD PHOTO", 16, () => this.openPhotoPicker(), HorizontalAlignment.Center, SECONDARY_TEXT, false, 2.8)
@@ -481,6 +497,22 @@ export class ShiftBridgeUIController extends BaseScriptComponent {
       interactable.onTriggerEnd.add(onOpen)
       clip.addObject(hit)
     }
+  }
+  /** Form-only, non-interactive contained preview. The holder owns a fixed
+   * FlexItem so it occupies the final slot of the photo-action row. */
+  private formPhotoThumbnail(parent: SceneObject, texture: Texture, size: number): void {
+    const ratio = texture.getHeight() > 0 ? texture.getWidth() / texture.getHeight() : 1
+    const width = ratio >= 1 ? size : size * ratio
+    const height = ratio >= 1 ? size / ratio : size
+    const holder = this.obj(parent, "FormPhotoThumbnail")
+    const item = holder.createComponent(FlexItem.getTypeName()) as FlexItem
+    item.alignSelf = FlexAlignSelf.Center; item.overrideWidth = size; item.overrideHeight = size
+    const layout = parent.getComponent(FlexLayout.getTypeName()) as FlexLayout; layout.addItems([item])
+    const imageHolder = this.obj(holder, "FormPhotoThumbnailImage", new vec3(0, 0, 0.08))
+    const image = imageHolder.createComponent("Component.Image") as Image
+    const material = IMAGE_MATERIAL.clone(); material.mainPass.baseTex = texture
+    image.clearMaterials(); image.addMaterial(material)
+    imageHolder.getTransform().setLocalScale(new vec3(width, height, 1))
   }
   /** Fits an image wholly inside the available region; bands are intentional. */
   private photoContain(parent: SceneObject, texture: Texture, maxWidth: number, maxHeight: number): void {
